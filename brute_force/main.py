@@ -26,7 +26,6 @@ def checkPegs(guess, pegs):
 
 def guessPegs(exact, similar, num_of_color, set_of_guesses, peg_set, length, tries):
   if (sum(num_of_color) != length and tries <= peg_set):
-    print(sum(num_of_color))
     # try to find out which colors make up the solution
     print(str(tries)*length)
     return str(tries)*length, set_of_guesses
@@ -36,7 +35,7 @@ def guessPegs(exact, similar, num_of_color, set_of_guesses, peg_set, length, tri
     for i in range(len(num_of_color)):
       for j in range(num_of_color[i]):
         list_of_possible_colors.append(str(i+1))
-    set_of_guesses = list(itertools.permutations(list_of_possible_colors, length))
+    set_of_guesses = list(set(itertools.permutations(list_of_possible_colors, length)))
   
   next_guess = ""
   for i in set_of_guesses.pop():
@@ -66,10 +65,13 @@ if __name__ == "__main__":
   num_of_color = [0 for i in range(peg_set)]
   while(exact != num_of_pegs):
     num_of_guesses += 1
+    print(f"ATTEMPT #{num_of_guesses}: ", end="")
     guess, set_of_guesses = guessPegs(exact, similar, num_of_color, set_of_guesses, peg_set, num_of_pegs, num_of_guesses)
     exact, similar = checkPegs(list(guess), solution)
     checkFeedback(exact, num_of_color, num_of_guesses)
-    print(f"exact: {exact}")
-    print(f"similar: {similar}")
-    print(f"number of guesses: {num_of_guesses}")
+    print(f"Black pegs (exact matches): {exact}")
+    print(f"White pegs (close matches): {similar}")
+    # print(f"number of guesses: {num_of_guesses}")
     print("-------------------------------------")
+
+  print(f"Code broken. Total number of guesses: {num_of_guesses}")

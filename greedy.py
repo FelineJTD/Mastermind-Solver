@@ -1,79 +1,88 @@
-import itertools
-import random
+from itertools import product, tee
+from random import choice
 
-def generatePegs(num_of_pegs=4, peg_set=6):
-  pegs = []
-  for i in range(num_of_pegs):
-    pegs.append(str(random.randint(1,peg_set)))
-  return pegs
+COLORS = 'red ', 'green', 'blue', 'yellow', 'purple', 'pink'#, 'grey', 'white', 'black', 'orange', 'brown', 'mauve', '-gap-'
+HOLES = 4
 
-def checkPegs(guess, pegs):
-  exact = 0
-  similar = 0
-  pegs_copy = pegs.copy()
-  for i in range(4):
-    if guess[i] == pegs_copy[i]:
-      exact += 1
-      guess[i] = "-1"
-      pegs_copy[i] = "0"
-  for i in range(4):
-    for j in range(4):
-      if guess[i] == pegs_copy[j]:
-        similar += 1
-        pegs_copy[j] = "0"
-        break
-  return exact, similar
+def random_solution():
+    """Generate a random solution."""
+    return tuple(choice(COLORS) for i in range(HOLES))
 
-def guessPegs(last_guess, exact, similar, next_guesses, num_of_color, set_of_guesses, peg_set, length, tries, avail_colors):
-  if (exact + similar == 0):
-    for i in range(len(last_guess)):
-      avail_colors.remove(last_guess[i])
+def all_solutions():
+    """Generate all possible solutions."""
+    for solution in product(*tee(COLORS, HOLES)):
+        yield solution
 
-  elif (exact == 1):
-    
-  
-  if (sum(num_of_color) != length and tries <= peg_set):
-    print(sum(num_of_color))
-    # try to find out which colors make up the solution
-    print(str(tries)*length)
-    return str(tries)*length
+def filter_matching_result(solution_space, guess, result):
+    """Filter solutions for matches that produce a specific result for a guess."""
+    for solution in solution_space:
+        if score(guess, solution) == result:
+            yield solution
 
-  if (set_of_guesses == []):
-    list_of_possible_colors = []
-    for i in range(len(num_of_color)):
-      for j in range(num_of_color[i]):
-        list_of_possible_colors.append(str(i+1))
-    set_of_guesses = list(itertools.permutations(list_of_possible_colors, length))
-  
-  print(set_of_guesses.pop())
-  return (str(set_of_guesses.pop()))
+def score(actual, guess):
+    """Calculate score of guess against actual."""
+    result = []
+    #Black pin for every color at right position
+    actual_list = list(actual)
+    guess_list = list(guess)
+    black_positions = [number for number, pair in enumerate(zip(actual_list, guess_list)) if pair[0] == pair[1]]
+    for number in reversed(black_positions):
+        del actual_list[number]
+        del guess_list[number]
+        result.append('black')
+    #White pin for every color at wrong position
+    for color in guess_list:
+        if color in actual_list:
+            #Remove the match so we can't score it again for duplicate colors
+            actual_list.remove(color)
+            result.append('white')
+    #Return a tuple, which is suitable as a dictionary key
+    return tuple(result)
 
-def checkFeedback(exact, num_of_color, tries):
-  num_of_color[tries-1] += exact
+def minimal_eliminated(solution_space, solution):
+    """For solution calculate how many possibilities from S would be eliminated for each possible colored/white score.
+    The score of the guess is the least of such values."""
+    result_counter = {}
+    for option in solution_space:
+        result = score(solution, option)
+        if result not in result_counter.keys():
+            result_counter[result] = 1
+        else:
+            result_counter[result] += 1
+    return len(solution_space) - max(result_counter.values())
 
+def best_move(solution_space):
+    """Determine the best move in the solution space, being the one that restricts the number of hits the most."""
+    elim_for_solution = dict((minimal_eliminated(solution_space, solution), solution) for solution in solution_space)
+    max_elimintated = max(elim_for_solution.keys())
+    return elim_for_solution[max_elimintated]
 
+def main(actual = None):
+    """Solve a game of mastermind."""
+    #Generate random 'hidden' sequence if actual is None
+    if actual == None:
+        actual = random_solution()
 
+    #Start the game of by choosing n unique colors
+    current_guess = COLORS[:HOLES]
 
-if __name__ == "__main__":
-  num_of_pegs = 4
-  peg_set = 6
-  avail_colors = ['1','2','3','4','5','6']
+    #Initialize solution space to all solutions
+    solution_space = all_solutions()
+    guesses = 1
+    while True:
+        #Calculate current score
+        current_score = score(actual, current_guess)
+        #print '\t'.join(current_guess), '\t->\t', '\t'.join(current_score)
+        if current_score == tuple(['black'] * HOLES):
+            print (guesses, 'guesses for\t', '\t'.join(actual))
+            return guesses
 
-  solution = generatePegs(num_of_pegs, peg_set)
-  print(solution)
+        #Restrict solution space to exactly those hits that have current_score against current_guess
+        solution_space = tuple(filter_matching_result(solution_space, current_guess, current_score))
 
-  exact = 0
-  similar = 0
-  num_of_guesses = 0
-  set_of_guesses = []
+        #Pick the candidate that will limit the search space most
+        current_guess = best_move(solution_space)
+        guesses += 1
 
-  num_of_color = [0 for i in range(peg_set)]
-  while(exact != num_of_pegs):
-    num_of_guesses += 1
-    guess = guessPegs(exact, similar, num_of_color, set_of_guesses, peg_set, num_of_pegs, num_of_guesses)
-    exact, similar = checkPegs(list(guess), solution)
-    checkFeedback(exact, num_of_color, num_of_guesses)
-    print(num_of_color)
-    print(f"exact: {exact}")
-    print(f"similar: {similar}")
-    print(f"number of guesses: {num_of_guesses}")
+if __name__ == '__main__':
+    print (max(main(sol) for sol in all_solutions()))
