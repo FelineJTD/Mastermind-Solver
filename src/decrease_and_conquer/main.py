@@ -81,7 +81,11 @@ if __name__ == "__main__":
   peg_set = 6
 
   solution = generatePegs(num_of_pegs, peg_set)
-  print(solution)
+  print("\033[91mSolution code: ", end="")
+  for i in range(4):
+    print(solution[i], end="")
+  print("\033[0m")
+  print("-------------------------------------")
 
   exact = 0
   similar = 0
@@ -101,3 +105,8 @@ if __name__ == "__main__":
     print(f"White pegs (close matches): {similar}")
     # print(f"number of guesses: {num_of_guesses}")
     print("-------------------------------------")
+  cyan = "\033[96m"
+  green = "\033[92m"
+  b = "\033[1m"
+  # print(green, b, end="")
+  print(f"{green}{b}Code broken. Total number of guesses: {num_of_guesses}")
