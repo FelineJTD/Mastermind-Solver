@@ -25,10 +25,9 @@ def checkPegs(guess, pegs):
         break
   return exact, similar
 
-def guessPegs(exact, similar, num_of_color, set_of_guesses, peg_set, length, tries):
+def guessPegs(num_of_color, set_of_guesses, peg_set, length, tries):
   if (sum(num_of_color) != length and tries <= peg_set):
     # try to find out which colors make up the solution
-    # print(str(tries)*length)
     return str(tries)*length, set_of_guesses
 
   if (set_of_guesses == []):
@@ -80,17 +79,16 @@ if __name__ == "__main__":
     num_of_color = [0 for i in range(peg_set)]
     while(exact != num_of_pegs):
       num_of_guesses += 1
-      guess, set_of_guesses = guessPegs(exact, similar, num_of_color, set_of_guesses, peg_set, num_of_pegs, num_of_guesses)
+      guess, set_of_guesses = guessPegs(num_of_color, set_of_guesses, peg_set, num_of_pegs, num_of_guesses)
       exact, similar = checkPegs(list(guess), solution)
       checkFeedback(exact, num_of_color, num_of_guesses)
-      # list_of_prev_guesses[guess] = exact, similar
-      # checkFeedback(exact, num_of_color, num_of_guesses)
 
     if (num_of_guesses > worst_case):
       worst_case = num_of_guesses
     total += num_of_guesses
 
     print(f"{num_of_guesses} guess(es) for {solution}")
+
   timerEnd = perf_counter()
   cyan = "\033[96m"
   green = "\033[92m"

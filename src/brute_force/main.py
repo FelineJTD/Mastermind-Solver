@@ -60,7 +60,6 @@ if __name__ == "__main__":
     print(solution[i], end="")
   print("\033[0m")
   print("-------------------------------------")
-  # print(solution)
 
   exact = 0
   similar = 0
@@ -76,11 +75,9 @@ if __name__ == "__main__":
     checkFeedback(exact, num_of_color, num_of_guesses)
     print(f"Black pegs (exact matches): {exact}")
     print(f"White pegs (close matches): {similar}")
-    # print(f"number of guesses: {num_of_guesses}")
     print("-------------------------------------")
 
   cyan = "\033[96m"
   green = "\033[92m"
   b = "\033[1m"
-  # print(green, b, end="")
   print(f"{green}{b}Code broken. Total number of guesses: {num_of_guesses}")

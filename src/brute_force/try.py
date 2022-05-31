@@ -1,4 +1,3 @@
-from cgi import print_arguments
 import itertools
 import random
 from time import perf_counter

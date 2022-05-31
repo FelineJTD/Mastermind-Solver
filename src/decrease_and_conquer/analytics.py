@@ -25,18 +25,15 @@ def checkPegs(guess, pegs):
         break
   return exact, similar
 
-def guessPegs(list_of_prev_guesses, prev_guess, exact, similar, tries):
-  # print(list_of_prev_guesses)
-  if (tries == 1):
+def guessPegs(list_of_prev_guesses):
+  if (len(list_of_prev_guesses) == 0): # first guess
     guess = generatePegs()
-    # print ("".join(guess))
     return "".join(guess)
   else:
     e = -1
     s = -1
     guess = "0000"
     accepted = False
-    # print(list_of_prev_guesses)
     while (not(accepted)):
       guess = generatePegs()
       accepted = True
@@ -47,49 +44,19 @@ def guessPegs(list_of_prev_guesses, prev_guess, exact, similar, tries):
           break
 
     guess = "".join(guess)
-    # print(e, s)
-    # print(list_of_prev_guesses[i][0], list_of_prev_guesses[i][1])
-    # print(guess)
     return guess
-  # if (sum(num_of_color) != length and tries <= peg_set):
-  #   # try to find out which colors make up the solution
-  #   print(str(tries)*length)
-  #   return str(tries)*length, set_of_guesses
-
-  # if (set_of_guesses == []):
-  #   list_of_possible_colors = []
-  #   for i in range(len(num_of_color)):
-  #     for j in range(num_of_color[i]):
-  #       list_of_possible_colors.append(str(i+1))
-  #   set_of_guesses = list(itertools.permutations(list_of_possible_colors, length))
-  
-  # next_guess = ""
-  # for i in set_of_guesses.pop():
-  #   next_guess += i
-  # print(next_guess)
-  # return (next_guess, set_of_guesses)
 
 def checkFeedback(exact, num_of_color, tries):
   if (sum(num_of_color) != 4 and tries <= 6):
     num_of_color[tries-1] += exact
 
-COLORS = '1', '2', '3', '4', '5', '6'#, 'grey', 'white', 'black', 'orange', 'brown', 'mauve', '-gap-'
+COLORS = '1', '2', '3', '4', '5', '6'
 HOLES = 4
-
-def all_solutions():
-    """Generate all possible solutions."""
-    for solution in itertools.product(*itertools.tee(COLORS, HOLES)):
-        return solution
 
 if __name__ == "__main__":
   worst_case = 0
   total = 0
-  # pegs_av = "111122223333444455556666"
   all_possible_solutions = list(itertools.product(*itertools.tee(COLORS, HOLES)))
-  # print(all_possible_solutions)
-  # print(len(all_possible_solutions))
-  # while(True):
-  #   pass
   total_tries = len(all_possible_solutions)
   timeStart = perf_counter()
 
@@ -100,7 +67,6 @@ if __name__ == "__main__":
     peg_set = 6
 
     solution = list(all_possible_solutions.pop())
-    # print(solution)
 
     exact = 0
     similar = 0
@@ -111,10 +77,9 @@ if __name__ == "__main__":
     num_of_color = [0 for i in range(peg_set)]
     while(exact != num_of_pegs):
       num_of_guesses += 1
-      guess = guessPegs(list_of_prev_guesses, guess, exact, similar, num_of_guesses)
+      guess = guessPegs(list_of_prev_guesses)
       exact, similar = checkPegs(list(guess), solution)
       list_of_prev_guesses[guess] = exact, similar
-      # checkFeedback(exact, num_of_color, num_of_guesses)
 
     if (num_of_guesses > worst_case):
       worst_case = num_of_guesses
