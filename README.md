@@ -4,6 +4,7 @@
 This repository contains two different mastermind solvers, one implementing the brute force algorithm and the other implementing the decrease and conquer algorithm. The two produces different results (brute force is faster but requires more moves, decrease and conquer is slower but a win is guaranteed in 8 moves) and can be run separately.
 
 ## Mastermind
+![image](https://user-images.githubusercontent.com/75204822/171209200-587c48ad-e57d-447b-882c-434478c61a30.png)  
 Mastermind is a codebreaking board game featuring codes made of six different colours. To win, the codebreaker needs to guess the exact code that has been determined by the codemaker with the help of black and white pegs indicating correct and close guesses. Try playing the game at [gamesforthebrain.com](https://www.gamesforthebrain.com/game/guesscolors/) or [archimedes-lab.org](https://www.archimedes-lab.org/mastermind.html) (these websites are not mine).
 
 ## Mastermind in This Repository
@@ -14,7 +15,7 @@ This is how Mastermind is implemented here:
 - For each round, the game will give feedback on the number of “black pegs” for exact matches (pegs that are correct in both colour and position) and the number of “white pegs” for close matches (pegs that are correct in colour but is wrongly positioned).
 
 ## Why You Should Check This Out
-The algorithms described in this repository can be implemented in a real life Mastermind game by a human player. This also serves as a proof that yes, Mastermind can be won. It may also be used as a reference to create similar algorithms.
+The algorithms described in this repository can be implemented in a real life Mastermind game by a human player. This also serves as a proof that _yes, Mastermind can be won._ It may also be used as a reference to create similar algorithms.
 
 ## Requirements
 - Python 3
